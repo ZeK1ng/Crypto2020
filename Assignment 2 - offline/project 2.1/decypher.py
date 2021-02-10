@@ -3,15 +3,22 @@ import sys
 import binascii
 import random
 
-    
-def main():
-    if len(sys.argv) < 2:
-        print "Usage: python sample.py <filename>"
-        sys.exit(-1)
+def checkArgs():
+ if len(sys.argv) < 2:
+    print "Usage: python sample.py <filename>"
+    sys.exit(-1)
+
+def readData():
     f = open(sys.argv[1])
     cypherText = f.read()
     f.close()
+    return cypherText
+
+
+def main():
+    checkArgs()
     # sys.stdout.write(cypherText)
+    cypherText = readData()
     cypherText = converToIntBlocks(cypherText)
     num_blocks = len(cypherText)/ 16
     ctextBlocks = split_to_blocks(cypherText,num_blocks)
@@ -32,8 +39,9 @@ def doSendMessage(randBytes,ind,intermediate_state,block):
     for c in range(256):
         C1 = randBytes + [c]
         if 16-ind > 1:
-            C1 += [a^b for (a,b) in zip([16 - ind]*(15 - ind),intermediate_state)]
-        if Oracle_Send(C1+block, 2):
+            tmp = [a^b for (a,b) in zip([16 - ind]*(15 - ind),intermediate_state)]
+            C1 += tmp
+        if Oracle_Send(C1+block, 2) == 1:
             ch = c
             break
     return [ch ^ (16 - ind)] + intermediate_state
@@ -49,12 +57,17 @@ def startAttack(cypherBlocks,num_blocks):
         new_msg = [a^b for (a,b) in zip(intermediate_state, cypherBlocks[i-1])]
         new_msg += msg
         msg = new_msg
-    return ''.join([chr(ch) for ch in msg[:len(msg)-msg[len(msg)-1]]])
+    res= []
+    for ch in msg[:len(msg)-msg[len(msg)-1]]:
+        res.append(chr(ch))
+    return ''.join(res)
 
 
 def split_to_blocks(text,num_blocks):
-    blk = [text[i*16:i*16+16] for i in range(num_blocks)]
-    return blk
+    res = []
+    for i in range(num_blocks):
+        res.append(text[i*16:i*16+16])
+    return res
 
 def converToIntBlocks(ctext):
     converted = []
