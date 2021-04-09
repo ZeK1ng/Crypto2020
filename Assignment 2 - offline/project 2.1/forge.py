@@ -54,6 +54,7 @@ def main():
     blocks = getBlocks(data,block_size)
     Oracle_Connect()
     tag = getTag(data,block_size,blocks)
+    print(tag)
     verifyTag(data,tag)
     Oracle_Disconnect()
 

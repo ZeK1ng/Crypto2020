@@ -2,7 +2,7 @@ from oracle import *
 import sys
 import binascii
 import random
-
+#Very good articel https://robertheaton.com/2013/07/29/padding-oracle-attack/?fbclid=IwAR3_3qkFPzzFS5zmhuD7yal2Ml5Pv1QA0XE6Aq25TzQcWUdkYGu9q60IxYo
 def checkArgs():
  if len(sys.argv) < 2:
     print "Usage: python sample.py <filename>"
